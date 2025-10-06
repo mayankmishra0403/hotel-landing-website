@@ -1,13 +1,18 @@
 {
   "version": 2,
   "framework": "nextjs",
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
+  "devCommand": "next dev",
   "functions": {
     "api/**": {
       "runtime": "nodejs20.x",
       "memory": 1024,
-      "maxDuration": 20,
-      "regions": ["fra1"]
+  "maxDuration": 20
     }
+  },
+  "env": {
+    "NEXT_PUBLIC_BASE_URL": "https://edu-nova.tech"
   },
   "headers": [
     {
@@ -21,19 +26,7 @@
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
-    }
-  ]
-}
-{
-  "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "devCommand": "next dev",
-  "env": {
-    "NEXT_PUBLIC_BASE_URL": "https://edu-nova.tech"
-  },
-  "headers": [
+    },
     {
       "source": "/(.*)",
       "headers": [
