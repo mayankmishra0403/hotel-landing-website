@@ -8,6 +8,15 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+// Fixed positions for particles to avoid hydration mismatch
+const registerParticlePositions = [
+  { left: 12, top: 8 }, { left: 88, top: 18 }, { left: 22, top: 32 }, { left: 78, top: 42 },
+  { left: 42, top: 12 }, { left: 68, top: 28 }, { left: 38, top: 48 }, { left: 82, top: 58 },
+  { left: 18, top: 68 }, { left: 92, top: 78 }, { left: 8, top: 88 }, { left: 58, top: 92 },
+  { left: 38, top: 78 }, { left: 72, top: 88 }, { left: 28, top: 98 }, { left: 98, top: 2 },
+  { left: 2, top: 48 }, { left: 62, top: 52 }, { left: 52, top: 38 }, { left: 88, top: 98 }
+]
+
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -95,22 +104,22 @@ export default function RegisterPage() {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
         
         {/* Floating particles */}
-        {Array.from({ length: 20 }).map((_, i) => (
+        {registerParticlePositions.map((position, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-amber-400/30 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${position.left}%`,
+              top: `${position.top}%`,
             }}
             animate={{
               y: [-20, -100, -20],
               opacity: [0, 1, 0],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + (i * 0.1),
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.15,
             }}
           />
         ))}

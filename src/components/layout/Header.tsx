@@ -1,28 +1,50 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Phone, Mail, MapPin, User, LogOut } from 'lucide-react'
+import { Menu, X, Phone, Mail, MapPin, User } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/contexts/AuthContext'
-import toast from 'react-hot-toast'
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showUserMenu, setShowUserMenu] = useState(false)
   
-  const { user, logout, loading } = useAuth()
+  const { user } = useAuth()
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-      toast.success('Logged out successfully')
-      setShowUserMenu(false)
-    } catch (error) {
-      toast.error('Logout failed')
-    }
+  const handleLinkClick = () => {
+    setIsMenuOpen(false)
   }
+
+  // Close menu on escape key press
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false)
+      }
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleEscapeKey)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [isMenuOpen])
+
+  // Close menu when window is resized to desktop size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) { // md breakpoint
+        setIsMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-100">
@@ -94,29 +116,12 @@ export default function Header() {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
               {user ? (
-                <div className="flex items-center space-x-3 relative">
-                  <button
-                    className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium"
-                    onClick={() => setShowUserMenu((s) => !s)}
-                  >
+                <Link href="/profile">
+                  <div className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
                     <User className="w-5 h-5" />
                     <span>{user.name || 'Account'}</span>
-                  </button>
-                  {showUserMenu && (
-                    <div className="absolute right-0 top-10 bg-white border rounded-lg shadow-lg w-48 py-2 z-50">
-                      <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</Link>
-                      <Link href="/bookings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Bookings</Link>
-                      <button
-                        onClick={handleLogout}
-                        disabled={loading}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                </Link>
               ) : (
                 <Link href="/auth/login">
                   <Button variant="outline">
@@ -140,21 +145,27 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 border-t">
+          <motion.nav 
+            className="md:hidden py-4 border-t"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="flex flex-col space-y-4">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleLinkClick}>
                 Home
               </Link>
-              <Link href="/rooms" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link href="/rooms" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleLinkClick}>
                 Rooms
               </Link>
-              <Link href="/amenities" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link href="/amenities" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleLinkClick}>
                 Amenities
               </Link>
-              <Link href="/dining" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link href="/dining" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleLinkClick}>
                 Dining
               </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium">
+              <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium" onClick={handleLinkClick}>
                 Contact
               </Link>
               <div className="flex flex-col space-y-2 pt-4">
@@ -163,28 +174,14 @@ export default function Header() {
                     <div className="text-sm text-gray-600">
                       Welcome, {user.name}
                     </div>
-                    <Link href="/profile">
+                    <Link href="/profile" onClick={handleLinkClick}>
                       <Button variant="outline" size="sm" className="w-full">
                         My Profile
                       </Button>
                     </Link>
-                    <Link href="/bookings">
-                      <Button variant="outline" size="sm" className="w-full">
-                        My Bookings
-                      </Button>
-                    </Link>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full"
-                      onClick={handleLogout}
-                      disabled={loading}
-                    >
-                      Sign Out
-                    </Button>
                   </div>
                 ) : (
-                  <Link href="/auth/login">
+                  <Link href="/auth/login" onClick={handleLinkClick}>
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -194,12 +191,12 @@ export default function Header() {
                     </Button>
                   </Link>
                 )}
-                <Button variant="gradient" size="sm">
+                <Button variant="gradient" size="sm" onClick={handleLinkClick}>
                   Book Now
                 </Button>
               </div>
             </div>
-          </nav>
+          </motion.nav>
         )}
       </div>
     </header>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Callback Debug</title>
+</head>
+<body>
+    <h1>Payment Callback Debug</h1>
+    <button onclick="testCallback()">Test Payment Callback Flow</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCallback() {
+            const testData = {
+                orderId: "MOCK_HOTEL_debug_" + Date.now(),
+                bookingId: "debug_booking_" + Date.now()
+            };
+
+            try {
+                console.log('Testing callback verification with:', testData);
+                
+                const response = await fetch('/api/payment/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                console.log('Response headers:', response.headers);
+                
+                const result = await response.json();
+                console.log('API Response:', result);
+                
+                // Test the logic that the callback page uses
+                if (response.ok) {
+                    console.log('✅ Response is OK, setting payment result');
+                    console.log('Payment Status:', result.paymentStatus);
+                    console.log('Payment Status Type:', typeof result.paymentStatus);
+                    console.log('Success:', result.success);
+                    
+                    document.getElementById('result').innerHTML = `
+                        <div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                            <h3>✅ Success Response</h3>
+                            <p><strong>Status:</strong> ${result.paymentStatus}</p>
+                            <p><strong>Success:</strong> ${result.success}</p>
+                            <p><strong>Message:</strong> ${result.message}</p>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    console.log('❌ Response not OK, setting error');
+                    document.getElementById('result').innerHTML = `
+                        <div style="background: #fff0f0; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                            <h3>❌ Error Response</h3>
+                            <p>Status: ${response.status}</p>
+                            <p>Message: ${result.message || 'Payment verification failed'}</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('JavaScript Error:', error);
+                document.getElementById('result').innerHTML = `
+                    <div style="background: #fff0f0; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                        <h3>💥 JavaScript Error (This would cause "Failed to verify payment status")</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>This is what causes the callback page to show the error screen</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

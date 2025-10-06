@@ -38,26 +38,31 @@ export interface BookingFilters {
 }
 
 class BookingService {
-  // Create new booking
+  // Create new booking using secure API
   async createBooking(bookingData: Omit<Booking, '$id' | 'confirmationId' | 'createdAt' | 'updatedAt'>): Promise<any> {
     try {
-      const confirmationId = `HTR-${Date.now().toString().slice(-8).toUpperCase()}`
-      
-      const booking = {
-        ...bookingData,
-        confirmationId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      // Use server-side API route for secure booking creation with API key
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to create booking')
       }
 
-      const response = await databases.createDocument(
-        APPWRITE_CONFIG.databaseId,
-        APPWRITE_CONFIG.collections.bookings,
-        generateId(),
-        booking
-      )
+      const result = await response.json()
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Booking creation failed')
+      }
 
-      return response
+      return result.booking
+
     } catch (error) {
       console.error('Create booking error:', error)
       throw error
@@ -79,17 +84,28 @@ class BookingService {
     }
   }
 
-  // Get bookings by user ID
+  // Get bookings by user ID using secure API
   async getUserBookings(userId: string): Promise<any[]> {
     try {
-      const response = await databases.listDocuments(
-        APPWRITE_CONFIG.databaseId,
-        APPWRITE_CONFIG.collections.bookings,
-        [
-          // Add query for userId when you set up the collection
-        ]
-      )
-      return response.documents
+      const response = await fetch(`/api/bookings?userId=${encodeURIComponent(userId)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        console.error('Failed to fetch user bookings')
+        return []
+      }
+
+      const result = await response.json()
+      
+      if (result.success) {
+        return result.bookings || []
+      }
+
+      return []
     } catch (error) {
       console.error('Get user bookings error:', error)
       return []

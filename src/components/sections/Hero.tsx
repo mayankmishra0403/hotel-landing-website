@@ -259,23 +259,11 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* Enhanced CTA Buttons */}
+            {/* Enhanced CTA Button */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-6 justify-center mt-12"
+              className="flex justify-center mt-12"
             >
-              <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button 
-                  variant="outline" 
-                  size="xl" 
-                  className="bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm rounded-xl font-semibold px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Explore Our Rooms
-                </Button>
-              </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}

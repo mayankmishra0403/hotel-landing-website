@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import RoomCard from '@/components/rooms/RoomCard'
+import  EnhancedBookingModal from '@/components/ui/EnhancedBookingModal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { roomsData } from '@/data/hotel'
@@ -16,6 +17,18 @@ export default function RoomsPage() {
   const [priceFilter, setPriceFilter] = useState({ min: 0, max: 1000 })
   const [capacityFilter, setCapacityFilter] = useState(0)
   const [showFilters, setShowFilters] = useState(false)
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+
+  // Transform Room to BookingModal expected format
+  const transformRoomForBooking = (room: Room) => ({
+    id: room.id,
+    name: room.name,
+    price: room.price,
+    image: room.images[0], // Use first image
+    capacity: room.capacity,
+    amenities: room.amenities
+  })
 
   const filteredRooms = rooms.filter(room => {
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,8 +143,8 @@ export default function RoomsPage() {
                 <RoomCard
                   room={room}
                   onBookNow={() => {
-                    // Handle booking
-                    console.log('Booking room:', room.id)
+                    setSelectedRoom(room)
+                    setIsBookingModalOpen(true)
                   }}
                   onViewDetails={() => {
                     // Navigate to room details
@@ -163,6 +176,16 @@ export default function RoomsPage() {
           </motion.div>
         )}
       </div>
+
+      {/* Enhanced Booking Modal */}
+      <EnhancedBookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => {
+          setIsBookingModalOpen(false)
+          setSelectedRoom(null)
+        }}
+        selectedRoom={selectedRoom ? transformRoomForBooking(selectedRoom) : undefined}
+      />
     </div>
   )
 }

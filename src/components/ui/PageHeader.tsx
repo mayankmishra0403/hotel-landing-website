@@ -11,6 +11,25 @@ interface PageHeaderProps {
   gradientTo?: string
 }
 
+// Fixed positions to avoid hydration mismatch
+const particlePositions = [
+  { left: 10, top: 20 },
+  { left: 25, top: 80 },
+  { left: 40, top: 15 },
+  { left: 60, top: 70 },
+  { left: 75, top: 30 },
+  { left: 90, top: 85 },
+  { left: 15, top: 50 },
+  { left: 35, top: 90 },
+  { left: 55, top: 25 },
+  { left: 80, top: 60 },
+  { left: 20, top: 75 },
+  { left: 45, top: 40 },
+  { left: 70, top: 10 },
+  { left: 85, top: 95 },
+  { left: 30, top: 65 }
+]
+
 export default function PageHeader({
   title,
   subtitle,
@@ -32,22 +51,22 @@ export default function PageHeader({
       
       {/* Animated particles */}
       <div className="absolute inset-0">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {particlePositions.map((position, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-white/20 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${position.left}%`,
+              top: `${position.top}%`,
             }}
             animate={{
               y: [-20, -100, -20],
               opacity: [0, 1, 0],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3 + (i * 0.3), // Fixed duration based on index
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.2, // Fixed delay based on index
             }}
           />
         ))}

@@ -10,6 +10,7 @@ export const APPWRITE_CONFIG = {
     users: process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID || 'users',
     reviews: process.env.NEXT_PUBLIC_APPWRITE_REVIEWS_COLLECTION_ID || 'reviews',
     contacts: process.env.NEXT_PUBLIC_APPWRITE_CONTACTS_COLLECTION_ID || 'contacts',
+    userPreferences: process.env.NEXT_PUBLIC_APPWRITE_USER_PREFERENCES_COLLECTION_ID || 'user_preferences',
   },
   bucketId: process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ID || 'hotel-ritam-storage',
 }
