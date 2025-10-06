@@ -38,6 +38,7 @@
     "gopd": "^1.2.0",
     "node-appwrite": "^20.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vercel": "^48.2.0"
   }
 }

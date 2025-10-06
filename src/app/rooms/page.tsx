@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import PageHeader from '@/components/ui/PageHeader'
 import RoomCard from '@/components/rooms/RoomCard'
-import  EnhancedBookingModal from '@/components/ui/EnhancedBookingModal'
+import EnhancedBookingModal from '@/components/ui/EnhancedBookingModal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { roomsData } from '@/data/hotel'
