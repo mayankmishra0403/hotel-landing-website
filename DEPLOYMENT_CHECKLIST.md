@@ -23,19 +23,25 @@
 
 ---
 
-### ✅ Step 2: Verify Vercel Auto-Deployment
-**Time**: 1 minute
+### ✅ Step 2: Add Environment Variables to Vercel
+**Time**: 5 minutes ⚠️ **CRITICAL - Payment won't work without this!**
 
 1. Go to: https://vercel.com/dashboard
-2. Find your project: `hotel-landing-website`
-3. Check **Deployments** tab
-4. Look for latest deployment from `sanitize-secrets` branch
-5. Status should be: **"Ready"** or **"Building"**
+2. Select your project: `hotel-landing-website`
+3. Click **Settings** → **Environment Variables**
+4. Add ALL variables from `VERCEL_ENV_VARIABLES.txt` file
+   - Or copy from your `.env.local` file
+   - Set environment to: **Production**
+   - Click **Save** after each variable
+5. After adding all variables, go to **Deployments** tab
+6. Click **"Redeploy"** to apply the new environment variables
 
-**If not deploying automatically**:
-- Click **"Redeploy"** button
-- Select latest commit: `fc830ae9`
-- Click **"Redeploy"**
+**Critical Variables** (must have):
+- ✅ `CASHFREE_APP_ID`
+- ✅ `CASHFREE_SECRET_KEY`
+- ✅ `NEXT_PUBLIC_CASHFREE_MODE=production`
+- ✅ `NEXT_PUBLIC_BASE_URL=https://edu-nova.tech`
+- ✅ All `APPWRITE_*` and `NEXT_PUBLIC_APPWRITE_*` variables
 
 ---
 
