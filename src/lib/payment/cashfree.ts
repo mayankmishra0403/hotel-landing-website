@@ -82,22 +82,53 @@ export async function createCashfreeOrder(data: PaymentOrderData): Promise<Payme
     apiUrl
   })
 
-  // Make API request
-  const response = await fetch(`${apiUrl}/orders`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-version': '2023-08-01',
-      'x-client-id': credentials.appId,
-      'x-client-secret': credentials.secretKey
-    },
-    body: JSON.stringify(orderRequest)
-  })
+  // Make API request (try with latest API version, then fallback once if auth fails)
+  const doCreate = async (apiVersion: '2023-08-01' | '2022-01-01') => {
+    const res = await fetch(`${apiUrl}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-version': apiVersion,
+        'x-client-id': credentials.appId,
+        'x-client-secret': credentials.secretKey
+      },
+      body: JSON.stringify(orderRequest)
+    })
+    return { res, apiVersion }
+  }
 
+  let { res: response, apiVersion } = await doCreate('2023-08-01')
+
+  // If authentication failed, retry with older API version once
   if (!response.ok) {
-    const error = await response.json()
-    console.error('❌ Cashfree API error:', error)
-    throw new Error(`Cashfree API error: ${error.message || response.statusText}`)
+    let errorBody: any = undefined
+    try { errorBody = await response.json() } catch {}
+    const isAuthFail = response.status === 401 || (errorBody?.code || '').toString().toLowerCase().includes('auth')
+    if (isAuthFail) {
+      console.warn('🔁 Cashfree auth failed with API version 2023-08-01, retrying with 2022-01-01')
+      const retry = await doCreate('2022-01-01')
+      response = retry.res
+      apiVersion = retry.apiVersion
+      try { errorBody = await response.clone().json() } catch {}
+    }
+
+    if (!response.ok) {
+      const status = response.status
+      const statusText = response.statusText
+      console.error('❌ Cashfree API error:', {
+        status,
+        statusText,
+        apiUrl,
+        mode: credentials.mode,
+        apiVersion,
+        cfError: errorBody
+      })
+      const cfMsg = errorBody?.message || errorBody?.message_text || errorBody?.error || 'Unknown error'
+      const hint = (status === 401)
+        ? 'Authentication failed. Verify CASHFREE_APP_ID/CASHFREE_SECRET_KEY match your NEXT_PUBLIC_CASHFREE_MODE (sandbox vs production) and are PG (Payment Gateway) keys.'
+        : ''
+      throw new Error(`Cashfree API error (${status} ${statusText}): ${cfMsg}. ${hint}`.trim())
+    }
   }
 
   const result = await response.json()
@@ -124,19 +155,44 @@ export async function verifyCashfreePayment(orderId: string): Promise<{
 
   console.log('🔍 Verifying payment:', orderId)
 
-  const response = await fetch(`${apiUrl}/orders/${orderId}`, {
-    method: 'GET',
-    headers: {
-      'x-api-version': '2023-08-01',
-      'x-client-id': credentials.appId,
-      'x-client-secret': credentials.secretKey
-    }
-  })
+  // Try verify with primary API version, then fallback if necessary
+  const doVerify = async (apiVersion: '2023-08-01' | '2022-01-01') => {
+    const res = await fetch(`${apiUrl}/orders/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'x-api-version': apiVersion,
+        'x-client-id': credentials.appId,
+        'x-client-secret': credentials.secretKey
+      }
+    })
+    return { res, apiVersion }
+  }
 
+  let { res: response, apiVersion: vApiVersion } = await doVerify('2023-08-01')
   if (!response.ok) {
-    const error = await response.json()
-    console.error('❌ Payment verification failed:', error)
-    throw new Error(`Payment verification failed: ${error.message || response.statusText}`)
+    let errorBody: any = undefined
+    try { errorBody = await response.json() } catch {}
+    const isAuthFail = response.status === 401 || (errorBody?.code || '').toString().toLowerCase().includes('auth')
+    if (isAuthFail) {
+      console.warn('🔁 Cashfree verify auth failed with API version 2023-08-01, retrying with 2022-01-01')
+      const retry = await doVerify('2022-01-01')
+      response = retry.res
+      vApiVersion = retry.apiVersion
+      try { errorBody = await response.clone().json() } catch {}
+    }
+
+    if (!response.ok) {
+      console.error('❌ Payment verification failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        apiUrl,
+        mode: credentials.mode,
+        apiVersion: vApiVersion,
+        cfError: errorBody
+      })
+      const cfMsg = errorBody?.message || errorBody?.message_text || errorBody?.error || 'Unknown error'
+      throw new Error(`Payment verification failed (${response.status} ${response.statusText}): ${cfMsg}`)
+    }
   }
 
   const result = await response.json()
