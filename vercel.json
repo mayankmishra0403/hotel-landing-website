@@ -4,13 +4,6 @@
   "buildCommand": "next build",
   "outputDirectory": ".next",
   "devCommand": "next dev",
-  "functions": {
-    "api/**": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-  "maxDuration": 20
-    }
-  },
   "env": {
     "NEXT_PUBLIC_BASE_URL": "https://edu-nova.tech"
   },
