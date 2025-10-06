@@ -32,7 +32,7 @@ export default function PaymentDebugPage() {
 
       console.log('📤 Testing Cashfree API with data:', testData)
 
-      const response = await fetch('/api/payment/create-order', {
+  const response = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

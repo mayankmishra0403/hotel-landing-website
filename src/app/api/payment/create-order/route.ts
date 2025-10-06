@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CashfreeService } from '@/lib/cashfree-service'
+import { createCashfreeOrder, formatPhoneNumber, generateOrderId } from '@/lib/payment/cashfree'
 
 /**
  * POST /api/payment/create-order
- * Creates a Cashfree payment order for hotel booking with mock fallback
+ * Legacy endpoint: Creates a Cashfree payment order (now proxies to new integration)
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    console.log('📥 Received payment order request:', JSON.stringify(body, null, 2))
+   console.log('📥 [legacy] Received payment order request:', JSON.stringify(body, null, 2))
     
     // Validate required fields
     const requiredFields = [
@@ -56,21 +56,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Calculate fees and total
-    const serviceFee = Math.floor(body.totalAmount * 0.025) // 2.5% service fee
-    const gst = Math.floor((body.totalAmount + serviceFee) * 0.0025) // 0.25% GST
-    const totalWithTaxes = body.totalAmount + serviceFee + gst
+  // Use simplified fee = totalAmount (any fees should be baked into total already)
+  const totalWithTaxes = Math.round(body.totalAmount)
 
-    console.log('💰 Fee calculation:', { 
-      subtotal: body.totalAmount, 
-      serviceFee, 
-      gst, 
-      total: totalWithTaxes 
-    })
-
-    // Generate unique order ID
-    const orderId = `HOTEL_${body.bookingId}_${Date.now()}`
-    console.log('🆔 Generated order ID:', orderId)
+  // Generate unique order ID via new util
+  const orderId = generateOrderId(body.bookingId)
+  console.log('🆔 [legacy] Generated order ID:', orderId)
 
     // Prepare booking data for Cashfree service
     const bookingData = {
@@ -88,64 +79,37 @@ export async function POST(request: NextRequest) {
       specialRequests: body.specialRequests || ''
     }
 
-    // Initialize Cashfree service and try to create payment order
-    const cashfreeService = new CashfreeService()
-    
+    // Create order via new integration so old callers continue to work
     try {
-      // Try to create payment order using Cashfree
-      const paymentOrder = await cashfreeService.createPaymentOrder(bookingData)
-
-      console.log('✅ Real Cashfree payment order created successfully')
-
-      return NextResponse.json({
-        success: true,
-        orderId: paymentOrder.orderId,
-        amount: paymentOrder.orderAmount,
-        currency: paymentOrder.orderCurrency,
-        paymentSessionId: paymentOrder.paymentSessionId,
-        paymentUrl: `https://payments.cashfree.com/order/${paymentOrder.orderId}`
-      })
-
-    } catch (cashfreeError: any) {
-      const isProduction = process.env.NEXT_PUBLIC_CASHFREE_MODE === 'production'
-      if (isProduction) {
-        console.error('❌ Cashfree order creation failed in production:', cashfreeError?.message || cashfreeError)
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'payment_order_failed',
-            message: 'Unable to create payment order. Please try again or use a different payment method.'
-          },
-          { status: 502 }
-        )
-      }
-
-      console.log('⚠️  Cashfree payment failed, falling back to mock payment system...')
-      console.log('💻 Development mode: Creating mock payment order')
-      
-      // Generate mock payment order for development
-      const mockOrderId = `MOCK_${orderId}`
-      const mockPaymentUrl = `http://localhost:3000/payment/mock?orderId=${mockOrderId}&amount=${totalWithTaxes}&bookingId=${body.bookingId}`
-
-      console.log('🎭 Mock payment order created:', {
-        orderId: mockOrderId,
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      const payment = await createCashfreeOrder({
+        orderId,
         amount: totalWithTaxes,
-        paymentUrl: mockPaymentUrl
+        customerName: bookingData.guestName,
+        customerEmail: bookingData.email,
+        customerPhone: formatPhoneNumber(bookingData.phone),
+        returnUrl: `${baseUrl}/payment/callback?bookingId=${bookingData.bookingId}&orderId=${orderId}`
       })
 
+      console.log('✅ [legacy] Order created via new integration')
       return NextResponse.json({
         success: true,
-        orderId: mockOrderId,
+        orderId: payment.orderId,
         amount: totalWithTaxes,
         currency: 'INR',
-        paymentSessionId: `mock_session_${Date.now()}`,
-        paymentUrl: mockPaymentUrl,
-        isMockPayment: true
+        paymentSessionId: payment.paymentSessionId,
+        paymentUrl: payment.paymentUrl
       })
+    } catch (err: any) {
+      console.error('❌ [legacy] Order creation failed:', err?.message || err)
+      return NextResponse.json(
+        { success: false, error: 'payment_order_failed', message: 'Unable to create payment order' },
+        { status: 502 }
+      )
     }
 
   } catch (error: any) {
-    console.error('❌ Error creating payment order:', error)
+  console.error('❌ [legacy] Error creating payment order:', error)
     return NextResponse.json(
       { 
         error: 'Failed to create payment order',

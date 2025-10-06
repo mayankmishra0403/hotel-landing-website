@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckCircle, XCircle, Clock, AlertCircle, ArrowLeft, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PaymentStatus } from '@/lib/cashfree-config'
+// Using simplified statuses inline to avoid old dependency
+type PaymentStatus = 'SUCCESS' | 'FAILED' | 'PENDING'
 
 interface PaymentResult {
   success: boolean
@@ -73,11 +74,11 @@ function PaymentCallbackContent() {
 
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
-      case PaymentStatus.SUCCESS:
+      case 'SUCCESS':
         return <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-      case PaymentStatus.FAILED:
+      case 'FAILED':
         return <XCircle className="w-16 h-16 text-red-500 mx-auto" />
-      case PaymentStatus.PENDING:
+      case 'PENDING':
         return <Clock className="w-16 h-16 text-yellow-500 mx-auto animate-pulse" />
       default:
         return <AlertCircle className="w-16 h-16 text-orange-500 mx-auto" />
@@ -86,11 +87,11 @@ function PaymentCallbackContent() {
 
   const getStatusColor = (status: PaymentStatus) => {
     switch (status) {
-      case PaymentStatus.SUCCESS:
+      case 'SUCCESS':
         return 'from-green-400 to-green-600'
-      case PaymentStatus.FAILED:
+      case 'FAILED':
         return 'from-red-400 to-red-600'
-      case PaymentStatus.PENDING:
+      case 'PENDING':
         return 'from-yellow-400 to-yellow-600'
       default:
         return 'from-orange-400 to-orange-600'
@@ -277,7 +278,7 @@ function PaymentCallbackContent() {
         )}
 
         {/* Failed payment options */}
-        {!paymentResult.success && paymentResult.paymentStatus !== PaymentStatus.PENDING && (
+  {!paymentResult.success && paymentResult.paymentStatus !== 'PENDING' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

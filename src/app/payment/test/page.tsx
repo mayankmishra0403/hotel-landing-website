@@ -54,7 +54,7 @@ export default function PaymentTestPage() {
       }
 
       // Create payment order
-      const paymentResponse = await fetch('/api/payment/create-order', {
+    const paymentResponse = await fetch('/api/payment/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

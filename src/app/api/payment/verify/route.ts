@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CashfreeService } from '@/lib/cashfree-service'
-import { PaymentStatus } from '@/lib/cashfree-config'
+import { verifyCashfreePayment } from '@/lib/payment/cashfree'
 import { serverDatabases, SERVER_CONFIG, isServerConfigured } from '@/lib/appwrite-server'
 import { Query } from 'appwrite'
 
@@ -26,13 +25,20 @@ export async function POST(request: NextRequest) {
     // Check if this is a mock payment
     const isMockPayment = orderId.startsWith('MOCK_')
     
-    let paymentResult
+    let paymentResult: {
+      status: 'SUCCESS' | 'FAILED' | 'PENDING'
+      transactionId?: string
+      amount?: number
+      paymentTime?: string
+      paymentMethod?: string
+      orderId?: string
+    }
     
     if (isMockPayment) {
       // Handle mock payment verification
       console.log('🎭 Mock payment verification for:', orderId)
       paymentResult = {
-        status: PaymentStatus.SUCCESS,
+        status: 'SUCCESS',
         transactionId: `mock_txn_${Date.now()}`,
         amount: 0, // Will be updated from booking if needed
         paymentTime: new Date().toISOString(),
@@ -40,13 +46,10 @@ export async function POST(request: NextRequest) {
         orderId
       }
     } else {
-      // Initialize Cashfree service for real payments
-      const cashfreeService = new CashfreeService()
-      
       try {
-        // Verify payment with Cashfree
-        console.log('💳 Verifying real payment with Cashfree:', orderId)
-        paymentResult = await cashfreeService.verifyPayment(orderId)
+        // Verify payment with new simplified integration
+        console.log('💳 Verifying real payment with Cashfree (new):', orderId)
+        paymentResult = await verifyCashfreePayment(orderId)
       } catch (cashfreeError: any) {
         console.log('❌ Cashfree verification failed:', cashfreeError.message)
         // In production, do not allow fallback to mock success
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest) {
         // Development fallback only
         console.log('🎭 Falling back to mock verification due to Cashfree error (development only)')
         paymentResult = {
-          status: PaymentStatus.SUCCESS,
+          status: 'SUCCESS',
           transactionId: `fallback_txn_${Date.now()}`,
           amount: 0,
           paymentTime: new Date().toISOString(),
@@ -119,27 +122,23 @@ export async function POST(request: NextRequest) {
     // Determine message based on payment status
     let message: string
     switch (paymentResult.status) {
-      case PaymentStatus.SUCCESS:
-        message = isMockPayment ? 
+      case 'SUCCESS':
+        message = isMockPayment ?
           'Mock payment successful! Your booking is confirmed. (Development mode)' :
           'Payment successful! Your booking is confirmed.'
         break
-      case PaymentStatus.FAILED:
+      case 'FAILED':
         message = 'Payment failed. Please try again.'
         break
-      case PaymentStatus.PENDING:
+      case 'PENDING':
+      default:
         message = 'Payment is being processed. Please wait.'
         break
-      case PaymentStatus.USER_DROPPED:
-        message = 'Payment was cancelled by user.'
-        break
-      default:
-        message = 'Payment status unknown. Please contact support.'
     }
 
     // Prepare response
     const response = {
-      success: paymentResult.status === PaymentStatus.SUCCESS,
+      success: paymentResult.status === 'SUCCESS',
       paymentStatus: paymentResult.status,
       orderId,
       bookingId,
