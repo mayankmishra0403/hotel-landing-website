@@ -370,27 +370,19 @@ export default function EnhancedBookingModal({ isOpen, onClose, selectedRoom }: 
         throw new Error('Failed to create booking')
       }
 
-      // Prepare payment data for Cashfree
+      // Prepare payment data - SIMPLIFIED
       const paymentData = {
         bookingId,
-        userId: user.$id,
         guestName: `${bookingData.guestDetails.firstName} ${bookingData.guestDetails.lastName}`.trim(),
         email: bookingData.guestDetails.email,
-        phone: bookingData.guestDetails.phone.replace(/[^0-9]/g, ''), // Clean phone number
-        checkInDate: bookingData.checkIn,
-        checkOutDate: bookingData.checkOut,
-        roomType: room.name,
-        guests: bookingData.guests,
-        totalAmount: Math.round(finalTotal), // Convert to integer for Cashfree
-        selectedServices: selectedServiceObjects.map(service => ({
-          name: service.name,
-          price: service.price
-        })),
-        specialRequests: bookingData.guestDetails.specialRequests
+        phone: bookingData.guestDetails.phone,
+        totalAmount: Math.round(finalTotal)
       }
 
-      // Create Cashfree payment order
-      const paymentResponse = await fetch('/api/payment/create-order', {
+      // Create payment order using NEW simplified API
+      console.log('💳 Creating payment order...', paymentData)
+      
+      const paymentResponse = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -398,11 +390,13 @@ export default function EnhancedBookingModal({ isOpen, onClose, selectedRoom }: 
         body: JSON.stringify(paymentData)
       })
 
-  const paymentResult = await paymentResponse.json()
+      const paymentResult = await paymentResponse.json()
 
       if (!paymentResponse.ok || !paymentResult.success) {
-        throw new Error(paymentResult.message || 'Failed to create payment order')
+        throw new Error(paymentResult.error || 'Unable to create payment order. Please try again.')
       }
+
+      console.log('✅ Payment order created:', paymentResult.orderId)
 
       // Save enhanced booking preferences (if available)
       try {
@@ -435,17 +429,17 @@ export default function EnhancedBookingModal({ isOpen, onClose, selectedRoom }: 
         console.log('User preferences update failed:', prefError)
       }
 
-      // Redirect to payment page (hosted Cashfree checkout)
+      // Redirect to Cashfree payment page
       if (paymentResult.paymentUrl) {
-        toast.success('Redirecting to secure Cashfree checkout...', { duration: 2000 })
+        console.log('🔄 Redirecting to payment page...')
+        toast.success('Redirecting to secure payment gateway...', { duration: 2000 })
+        
+        // Redirect after short delay
         setTimeout(() => {
           window.location.href = paymentResult.paymentUrl
-        }, 1200)
-      } else if (paymentResult.paymentSessionId) {
-        // Future enhancement: Initialize Drop Checkout JS here
-        toast.success('Opening secure checkout...', { duration: 2000 })
+        }, 1500)
       } else {
-        throw new Error('Payment session missing from response')
+        throw new Error('Payment URL not received. Please try again.')
       }
 
     } catch (error: any) {
