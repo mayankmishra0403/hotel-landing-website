@@ -98,9 +98,9 @@ export async function createUserPreferencesCollection() {
             SERVER_CONFIG.databaseId,
             collection.$id,
             attr.key,
-            attr.size,
+            attr.size || 255,
             attr.required,
-            attr.default,
+            typeof attr.default === 'string' ? attr.default : undefined,
             attr.array || false
           )
         } else if (attr.type === 'integer') {
@@ -111,7 +111,7 @@ export async function createUserPreferencesCollection() {
             attr.required,
             attr.min,
             attr.max,
-            attr.default
+            typeof attr.default === 'number' ? attr.default : undefined
           )
         } else if (attr.type === 'datetime') {
           result = await serverDatabases.createDatetimeAttribute(

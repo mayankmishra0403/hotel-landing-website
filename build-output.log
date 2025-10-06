@@ -1,0 +1,202 @@
+
+> hotel-ritam@0.1.0 build
+> next build --turbopack
+
+   ▲ Next.js 15.5.4 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 230ms
+ ✓ Compiled successfully in 2.3s
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./src/app/api/bookings/route.ts
+98:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payment/create-order/route.ts
+109:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+147:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payment/mock-create-order/route.ts
+52:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payment/verify/route.ts
+50:31  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+158:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payment/webhook/route.ts
+67:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+83:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+153:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+219:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/setup-collection/route.ts
+4:28  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+123:14  Warning: 'attrError' is defined but never used.  @typescript-eslint/no-unused-vars
+134:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/user-preferences/route.ts
+31:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+75:59  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+145:59  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+154:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/auth/login/page.tsx
+60:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+273:24  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/auth/register/page.tsx
+92:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/bookings/page.tsx
+5:20  Warning: 'MapPin' is defined but never used.  @typescript-eslint/no-unused-vars
+12:11  Warning: 'BookingDisplay' is defined but never used.  @typescript-eslint/no-unused-vars
+129:9  Warning: 'calculateNights' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/payment/callback/page.tsx
+32:9  Warning: 'orderToken' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+33:9  Warning: 'paymentStatus' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/payment/test/page.tsx
+17:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+95:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+270:70  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+270:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+319:70  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/payment-debug/page.tsx
+9:44  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+57:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+60:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/profile/page.tsx
+33:56  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+71:28  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+72:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+76:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+77:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+115:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+116:64  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+117:66  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+119:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+149:80  Error: Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free.  @typescript-eslint/ban-ts-comment
+171:14  Warning: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+190:9  Warning: 'getLoyaltyColor' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+199:9  Warning: 'getLoyaltyIcon' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+214:51  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+667:69  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+684:44  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+685:56  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+917:87  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/auth/AuthModal.tsx
+94:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/sections/Contact.tsx
+12:3  Warning: 'MessageSquare' is defined but never used.  @typescript-eslint/no-unused-vars
+13:3  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+153:15  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+239:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+409:59  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+432:91  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/sections/Dining.tsx
+77:10  Warning: 'selectedRestaurant' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+77:30  Warning: 'setSelectedRestaurant' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+150:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/sections/Gallery.tsx
+187:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+279:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/sections/QuickLinks.tsx
+118:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/sections/Services.tsx
+6:3  Warning: 'Plane' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'Shield' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+15:3  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+104:7  Warning: 'categories' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/BookingModal.tsx
+95:10  Warning: 'confirmationId' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+109:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+116:74  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+120:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+172:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+172:70  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+176:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+336:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+559:94  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/EnhancedBookingModal.tsx
+5:90  Warning: 'Wifi' is defined but never used.  @typescript-eslint/no-unused-vars
+5:141  Warning: 'Sparkles' is defined but never used.  @typescript-eslint/no-unused-vars
+178:26  Warning: 'setConfirmationId' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+268:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+275:74  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+279:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+366:28  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+366:87  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+451:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/ui/button.tsx
+43:32  Warning: 'asChild' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/contexts/AuthContext.tsx
+50:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+71:13  Warning: 'session' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+75:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+79:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+82:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+100:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+117:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+133:87  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+135:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+137:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+148:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+151:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/data/hotel.ts
+1:23  Warning: 'Review' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/cashfree-service.ts
+21:3  Warning: 'formatCurrency' is defined but never used.  @typescript-eslint/no-unused-vars
+100:18  Warning: 'parseError' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/services/auth.ts
+2:10  Warning: 'ID' is defined but never used.  @typescript-eslint/no-unused-vars
+57:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+114:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+135:24  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+135:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+152:83  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/services/booking.ts
+1:21  Warning: 'generateId' is defined but never used.  @typescript-eslint/no-unused-vars
+2:10  Warning: 'Models' is defined but never used.  @typescript-eslint/no-unused-vars
+42:114  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+88:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+116:59  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+118:11  Error: 'queries' is never reassigned. Use 'const' instead.  prefer-const
+141:78  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+160:68  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+175:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+189:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+202:46  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+249:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/services/userPreferences.ts
+1:10  Warning: 'databases' is defined but never used.  @typescript-eslint/no-unused-vars
+1:21  Warning: 'APPWRITE_CONFIG' is defined but never used.  @typescript-eslint/no-unused-vars
+2:10  Warning: 'Query' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

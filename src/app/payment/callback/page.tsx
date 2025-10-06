@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckCircle, XCircle, Clock, AlertCircle, ArrowLeft, Home } from 'lucide-react'
@@ -19,7 +19,7 @@ interface PaymentResult {
   message: string
 }
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [paymentResult, setPaymentResult] = useState<PaymentResult | null>(null)
@@ -294,5 +294,20 @@ export default function PaymentCallbackPage() {
         )}
       </motion.div>
     </div>
+  )
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <Clock className="w-16 h-16 mx-auto mb-4 animate-spin text-blue-600" />
+          <p className="text-lg font-semibold">Loading payment status...</p>
+        </div>
+      </div>
+    }>
+      <PaymentCallbackContent />
+    </Suspense>
   )
 }

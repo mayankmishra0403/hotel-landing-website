@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, XCircle, CreditCard, Clock } from 'lucide-react'
 
-export default function MockPaymentPage() {
+function MockPaymentContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const isProduction = process.env.NEXT_PUBLIC_CASHFREE_MODE === 'production'
@@ -152,5 +152,13 @@ export default function MockPaymentPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function MockPaymentPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <MockPaymentContent />
+    </Suspense>
   )
 }
