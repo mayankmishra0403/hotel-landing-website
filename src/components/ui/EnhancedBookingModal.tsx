@@ -429,17 +429,49 @@ export default function EnhancedBookingModal({ isOpen, onClose, selectedRoom }: 
         console.log('User preferences update failed:', prefError)
       }
 
-      // Redirect to Cashfree payment page
-      if (paymentResult.paymentUrl) {
-        console.log('🔄 Redirecting to payment page...')
-        toast.success('Redirecting to secure payment gateway...', { duration: 2000 })
-        
-        // Redirect after short delay
-        setTimeout(() => {
+      // Prefer popup checkout if session id is available, else redirect URL
+      try {
+        if (paymentResult.paymentSessionId) {
+          const { openCashfreePopup } = await import('@/lib/payment/cashfree-client')
+          toast.loading('Opening secure payment...', { id: 'pay', duration: 2000 })
+          const outcome = await openCashfreePopup(paymentResult.paymentSessionId)
+          toast.dismiss('pay')
+          
+          // Always verify on server post-checkout
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: paymentResult.orderId, bookingId })
+          })
+          const verify = await verifyRes.json()
+
+          if (verifyRes.ok && verify.success) {
+            toast.success('Payment confirmed!')
+            // Navigate user to My Bookings
+            window.location.href = '/bookings'
+            return
+          } else {
+            // If popup outcome was cancelled, inform user; otherwise show failure
+            if (outcome === 'cancelled') {
+              toast.error('Payment cancelled. You can try again from My Bookings.')
+            } else {
+              toast.error(verify?.message || 'Payment failed. Please try again.')
+            }
+          }
+        } else if (paymentResult.paymentUrl) {
+          console.log('🔄 Redirecting to payment page...')
+          toast.success('Redirecting to secure payment gateway...', { duration: 2000 })
+          setTimeout(() => { window.location.href = paymentResult.paymentUrl }, 1200)
+        } else {
+          throw new Error('Payment initiation data missing.')
+        }
+      } catch (popupErr) {
+        console.warn('Cashfree popup unavailable, falling back to redirect:', popupErr)
+        if (paymentResult.paymentUrl) {
           window.location.href = paymentResult.paymentUrl
-        }, 1500)
-      } else {
-        throw new Error('Payment URL not received. Please try again.')
+        } else {
+          throw popupErr
+        }
       }
 
     } catch (error: any) {

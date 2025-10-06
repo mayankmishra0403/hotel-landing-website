@@ -15,10 +15,8 @@ const nextConfig: NextConfig = {
   },
   // Exclude mobile-app from compilation
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
-  experimental: {
-    // Skip type checking for non-Next.js folders
-    typedRoutes: false,
-  },
+  // Next.js 15+: typedRoutes moved out of experimental
+  typedRoutes: false,
 };
 
 export default nextConfig;
