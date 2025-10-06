@@ -236,37 +236,21 @@ export class CashfreeService {
 
   /**
    * Create authorization headers for Cashfree API
+   * Cashfree uses simple App ID and Secret Key authentication
    */
   private createAuthHeaders(method: string, url: string, body?: string): Record<string, string> {
-    const timestamp = Math.floor(Date.now() / 1000).toString()
-    
-    // Create signature according to Cashfree specification
-    // Format: METHOD + URL + BODY + TIMESTAMP
-    const signatureBody = body || ''
-    const signatureData = `${method}${url}${signatureBody}${timestamp}`
-    
-    console.log('🔐 Creating signature with data:', {
+    console.log('🔐 Creating auth headers for Cashfree API:', {
       method,
       url,
-      bodyLength: signatureBody.length,
-      timestamp,
-      signatureString: `${method}${url}[${signatureBody.length} chars]${timestamp}`,
       appId: this.config.appId.substring(0, 10) + '...',
-      secretKeyLength: this.config.secretKey.length
+      secretKeyLength: this.config.secretKey.length,
+      apiVersion: this.config.apiVersion
     })
-    
-    const signature = crypto
-      .createHmac('sha256', this.config.secretKey)
-      .update(signatureData, 'utf8')
-      .digest('base64')
-    
-    console.log('🔐 Generated signature:', signature.substring(0, 10) + '...')
 
     return {
       'x-api-version': this.config.apiVersion,
       'x-client-id': this.config.appId,
-      'x-client-signature': signature,
-      'x-client-timestamp': timestamp
+      'x-client-secret': this.config.secretKey
     }
   }
 
